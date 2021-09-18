@@ -33,7 +33,7 @@ def find_json(video_path):
             with open(json_path, 'r', encoding='utf8')as fp:
                 json_data = json.load(fp)
                 inner_path = Path(inner_path / json_data['type_tag'])
-                title = validate_title(get_title(json_data, 5))
+                title = validate_title(get_title(json_data, title_type))
                 title_path = str(Path(inner_path, title + '.mp4'))
                 save_path = str(Path(save_position, title + '.mp4'))
                 if os.path.exists(save_path):
@@ -62,8 +62,12 @@ def get_title(json_data, type):
         page_data = json_data['ep']
     if 'page' in page_data.keys():
         page = str(page_data['page'])
+    if 'index' in page_data.keys():  # 文件夹以S开头
+        page = str(page_data['index'])
     if 'part' in page_data.keys():
         part = page_data['part']
+    if 'index_title' in page_data.keys():  # 文件夹以S开头
+        part = page_data['index_title']
     if type == 1:  # 标题
         return title
     elif type == 2:  # 1
@@ -84,6 +88,9 @@ def validate_title(title):
     title = re.sub(rstr, '_', title)  # 用_替换非法字符
     title = re.sub('–', '-', title)  # 用-替换破折号
     return title
+
+
+title_type = 6
 
 
 if __name__ == '__main__':
